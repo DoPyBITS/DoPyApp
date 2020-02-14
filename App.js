@@ -11,9 +11,25 @@
 
  import Login from "./src/Screens/LoginScreen";
  import Billing from "./src/Screens/BillingScreen";
+ import History from "./src/Screens/HistoryScreen"
 
- export default class App extends Component {
-   render() {
-     return <Billing />;
-  }
- }
+const Stack = createStackNavigator();
+
+function App()
+{
+    return (
+        <NavigationContainer>
+            <Stack.Navigator
+             screenOptions={{
+                 headerShown: false
+               }}>
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Billing" component={Billing} />
+                <Stack.Screen name="History" component={History} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    )
+}
+
+
+ export default App;

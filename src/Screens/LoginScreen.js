@@ -8,11 +8,12 @@ import colors from "../Styles/Color";
 import InputField from "../Components/InputField";
 import InputButton from "../Components/InputButton";
 
+
 export default class LoginScreen extends Component
 {
-    constructor()
+    constructor(props)
     {
-        super();
+        super(props);
 
         this.state = {
             detailer : "",
@@ -30,11 +31,14 @@ export default class LoginScreen extends Component
     };
 
     handleCameraChange = camera => {
-            this.setState({camera: camera});
+        this.setState({camera: camera});
     };
 
     login = () => {
-        ;
+        this.props.navigation.navigate('History', {
+                clicker: this.state.clicker,
+                detailer: this.state.detailer,
+                camera: this.state.camera})
     }
 
     render() {
@@ -60,11 +64,12 @@ export default class LoginScreen extends Component
                         onChangeText={this.handleCameraChange}
                         inputType="default"
                     />
-                    <InputButton
-                        title="Log In"
-                        onPress={this.login}
-                    />
                 </ScrollView>
+                <KeyboardAvoidingView style={{alignItems:"flex-end" }}>
+                    <InputButton
+                        onPress={this.login}
+                        />
+                </KeyboardAvoidingView>
             </View>
         );
     }
@@ -79,7 +84,7 @@ const styles = StyleSheet.create({
     loginHeader: {
         fontSize: 46,
         color: colors.white,
-        fontWeight: "300",
+        fontWeight: "normal",
         textAlign: 'center',
         marginBottom: 40
      }

@@ -20,6 +20,8 @@ class InputField extends Component
               labelText,
               inputType,
               writeText,
+              customStyle,
+              blurOnSubmit,
               onChangeText,
               onSubmitEditing
         } = this.props;
@@ -27,20 +29,19 @@ class InputField extends Component
         const keyboardType = inputType == "idno" ? "number-pad": "default";
 
         return (
-            <View style={styles.wrapper}>
-                <TextInput
-                    value={writeText}
-                    placeholder={labelText}
-                    style = {styles.inputFieldStyle}
-                    autoCorrect={false}
-                    onChangeText={onChangeText}
-                    autoCapitalize="characters"
-                    keyboardType={keyboardType}
-                    textColor={colors.white}
-                    placeholderTextColor={colors.white}
-                    onSubmitEditing={onSubmitEditing}
-                 />
-            </View>
+            <TextInput
+                value={writeText}
+                placeholder={labelText}
+                style = {styles.inputFieldStyle}
+                autoCorrect={false}
+                blurOnSubmit={blurOnSubmit}
+                onChangeText={onChangeText}
+                autoCapitalize="characters"
+                keyboardType={keyboardType}
+                textColor={colors.white}
+                placeholderTextColor={colors.white}
+                onSubmitEditing={onSubmitEditing}
+             />
         );
     }
 }
@@ -50,6 +51,7 @@ const styles = StyleSheet.create({
         display: 'flex'
     },
     inputFieldStyle: {
+        flex:1,
         borderBottomWidth: 1,
         paddingTop: 5,
         paddingBottom: 5,
