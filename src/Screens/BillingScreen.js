@@ -4,13 +4,14 @@ import {View,
         ScrollView,
         CheckBox,
         KeyboardAvoidingView,
+        TouchableOpacity,
         StyleSheet} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import colors from "../Styles/Color";
 import InputField from "../Components/InputField";
 import InputButton from "../Components/InputButton";
 import ClickableCounter from "../Components/ClickableCounter";
-import EditableText from "../Components/EditableText";
+import DeletableText from "../Components/DeletableText";
 
 import firestore from '@react-native-firebase/firestore';
 
@@ -22,6 +23,7 @@ export default class BillingScreen extends Component
 
         this.idNumbers = [];
         this.quantities = [];
+        this.totalSnaps = props.route.params.totalSnaps;
 
         this.state = {
             detailer : props.route.params.detailer.toUpperCase(),
@@ -29,37 +31,67 @@ export default class BillingScreen extends Component
             camera : props.route.params.camera.toUpperCase(),
             snapno : 1,
             isHigherDegree : false,
+            isPhD: false,
             isOutstation : false,
             IDNumber : "",
             Quantity:1,
             editingText:"",
             description:"",
             currIdx:0,
-            isLoading: true
+            isLoading: true,
+            sameAs:""
         };
 
         if (props.route.params.snapNum)
         {
             const snapShot = firestore().collection(this.state.camera)
-                .doc(String(props.route.params.snapNum))
+                .doc(String(this.props.route.params.snapNum))
                 .get()
                 .then((docSnapshot) => {
-                    this.idNumbers = docSnapshot.idNumbers;
-                    this.quantities = docSnapshot.quantities;
+                    this.idNumbers = docSnapshot.data().idNumbers;
+                    this.quantities = docSnapshot.data().quantities;
                     this.setState({isLoading:false,
                                    isOutstation:docSnapshot.outstation,
                                    description: docSnapshot.description,
-                                   snapno: props.route.params.snapNum});
+                                   snapno: this.props.route.params.snapNum,
+                                   currIdx: this.idNumbers.length});
+                }).catch(function(error) {
+                      console.log("Error getting document:", error);
+                      throw error;
+                  });
+        }
+        else
+        {
+            this.setState({snapno:this.totalSnaps+1, isLoading:false});
+        }
+    }
+
+    componentDidMount() {
+        if (this.props.route.params.snapNum)
+        {
+            this.totalSnaps = this.props.route.params.totalSnaps;
+            const snapShot = firestore().collection(this.state.camera)
+                .doc(String(this.props.route.params.snapNum))
+                .get()
+                .then((docSnapshot) => {
+                    this.idNumbers = docSnapshot.data().idNumbers;
+                    this.quantities = docSnapshot.data().quantities;
+                    this.setState({isLoading:false,
+                                   isOutstation:docSnapshot.outstation,
+                                   description: docSnapshot.description,
+                                   snapno: this.props.route.params.snapNum,
+                                   currIdx: this.idNumbers.length});
+                }).catch(function(error) {
+                    console.log("Error getting document:", error);
+                    throw error;
                 });
         }
         else
         {
-            var numSnaps = 0
-            const snapShot = firestore().collection(this.state.camera).get()
-                        .then((querySnapshot) => {
-                            this.setState({isLoading:false,
-                                           snapno: querySnapshot.size+1})
-                        });
+            this.idNumbers = [];
+            this.quantities = [];
+            this.totalSnaps = this.props.route.params.totalSnaps
+            this.setState({snapno:this.totalSnaps+1, isLoading:false});
         }
     }
 
@@ -71,15 +103,19 @@ export default class BillingScreen extends Component
         this.setState({isHigherDegree: !this.state.isHigherDegree})
     }
 
+    handlePhDChange = () => {
+        this.setState({isPhD: !this.state.isPhD});
+    }
+
     handleIDNumberChange = IDNumber => {
         this.setState({IDNumber : IDNumber});
     }
 
     handleIDNumberSubmit = () => {
-        if (/^\d+$/.test(this.state.IDNumber) && this.state.IDNumber.length == 6
-            && !this.idNumbers.includes(this.state.IDNumber))
+        if (/^\d+$/.test(this.state.IDNumber) && this.state.IDNumber.length == 6)
         {
-            var actualID = this.state.isHigherDegree?"M"+this.state.IDNumber:this.state.IDNumber;
+            var actualID = this.state.isHigherDegree?"H"+this.state.IDNumber:this.state.IDNumber;
+            actualID = this.state.isPhD?"P"+this.state.IDNumber:this.state.IDNumber;
             if (this.state.currIdx == this.idNumbers.length)
             {
                 this.idNumbers.push(actualID);
@@ -103,18 +139,57 @@ export default class BillingScreen extends Component
     }
 
     handleTextEdit = textEdit => {
+       var isHD = textEdit.title.includes("H")
+       var isPhD = textEdit.title.includes("P")
+
        this.setState({IDNumber:textEdit.title,
                       Quantity:textEdit.quantity,
+                      isHigherDegree: isHD,
+                      isPhD: isPhD,
                       currIdx:this.idNumbers.indexOf(textEdit.title)});
+    }
+
+    handleTextDelete = textDelete => {
+        const index = this.idNumbers.indexOf(textDelete.title);
+        this.idNumbers.splice(index, 1);
+        this.quantities.splice(index, 1);
+        this.setState(this.state);
     }
 
     handleDescriptionChange = description => {
         this.setState({description: description});
     }
 
-    handleSnapSubmit = () => {
-        console.log(this.quantities)
+    handleSameAsChange = sameAs => {
+        this.setState({sameAs: sameAs});
+    }
 
+    handleSameAsSubmit = () => {
+        if (!(this.state.sameAs === ""))
+        {
+            this.setState({isLoading:true});
+            firestore().collection(this.state.camera)
+                .doc(this.state.sameAs)
+                .get()
+                .then((docSnapshot) => {
+                    var tempIDArr = docSnapshot.data().idNumbers;
+                    var tempQuantArr = docSnapshot.data().quantities;
+                    console.log(tempIDArr)
+                    this.idNumbers = this.idNumbers.concat(tempIDArr);
+                    this.quantities = this.quantities.concat(tempQuantArr);
+                    console.log(this.idNumbers);
+                    this.setState({isLoading:false,
+                                   currIdx:this.idNumbers.length,
+                                   sameAs:""
+                                   });
+                }).catch(function(error) {
+                    console.log("Error getting document:", error);
+                    throw error;
+                });
+        }
+    }
+
+    handleSnapSubmit = () => {
         firestore().collection(this.state.camera)
                  .doc(String(this.state.snapno))
                  .set( {
@@ -123,7 +198,7 @@ export default class BillingScreen extends Component
                     description: this.state.description,
                     outstation: this.state.isOutstation,
                     idNumbers: this.idNumbers,
-                    quantities: this.state.quantities
+                    quantities: this.quantities
                  })
         .then(function() {
             console.log("Document successfully written!");
@@ -140,8 +215,59 @@ export default class BillingScreen extends Component
                        editingText:"",
                        description:"",
                        currIdx:0,
-                       snapno:this.state.snapno+1
+                       snapno:this.state.totalSnaps+2,
+                       totalSnaps:this.state.totalSnaps+1
                        })
+    }
+
+    goPrevious = () => {
+        if (this.state.snapno == 1)
+        {
+            alert("Can't go back!!");
+        }
+
+        this.setState({isLoading: true});
+
+        firestore().collection(this.state.camera)
+                   .doc(String(this.state.snapno-1))
+                   .get()
+                   .then((docSnapshot) => {
+                       this.idNumbers = docSnapshot.data().idNumbers;
+                       this.quantities = docSnapshot.data().quantities;
+                       this.setState({isLoading:false,
+                                      isOutstation:docSnapshot.outstation,
+                                      description: docSnapshot.description,
+                                      snapno: this.state.snapno - 1,
+                                      currIdx: this.idNumbers.length});
+                   }).catch(function(error) {
+                       console.log("Error getting document:", error);
+                       throw error;
+                   });
+    }
+
+    goNext = () => {
+        if (this.state.snapno == this.totalSnaps)
+        {
+            alert("Can't go to the next!!");
+        }
+
+        this.setState({isLoading: true});
+
+        firestore().collection(this.state.camera)
+                   .doc(String(this.state.snapno+1))
+                   .get()
+                   .then((docSnapshot) => {
+                       this.idNumbers = docSnapshot.data().idNumbers;
+                       this.quantities = docSnapshot.data().quantities;
+                       this.setState({isLoading:false,
+                                      isOutstation:docSnapshot.outstation,
+                                      description: docSnapshot.description,
+                                      snapno: this.state.snapno + 1,
+                                      currIdx: this.idNumbers.length});
+                   }).catch(function(error) {
+                       console.log("Error getting document:", error);
+                       throw error;
+                   });
     }
 
     render()
@@ -150,7 +276,7 @@ export default class BillingScreen extends Component
         {
             return (
                 <View style={styles.background}>
-                    <Text>
+                    <Text style={styles.infoHeader}>
                         Loading...
                     </Text>
                 </View>
@@ -158,8 +284,26 @@ export default class BillingScreen extends Component
         }
         else
         {
+            var keyBoardType = this.state.isOutstation?"default":"idno";
+
             return (
                 <View style = {styles.background}>
+                    <View style={{flexDirection:"row"}}>
+                        <TouchableOpacity
+                            style={{flex:1}}
+                            onPress = {this.goPrevious}>
+                            <Text style = {[styles.infoHeader, {textAlign:'left', marginLeft:10, fontSize:16}]}>
+                                {'<'} Previous
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{flex:1}}
+                            onPress = {this.goNext}>
+                            <Text style = {[styles.infoHeader, {textAlign:'right', marginRight:10, fontSize:16}]}>
+                                Next {'>'}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                     <View style={{flexDirection:"row"}}>
                         <Text style={[{flex:1, textAlign:'center'},styles.infoHeader]}>
                             Clicker: {this.state.clicker}
@@ -191,11 +335,19 @@ export default class BillingScreen extends Component
                                 Higher Degree
                             </Text>
                         </View>
+                        <View style={{flex:1, alignItems:'center'}}>
+                            <CheckBox value={this.state.isPhD}
+                                      onValueChange={this.handlePhDChange}
+                            />
+                            <Text style={styles.infoHeader}>
+                                PhD
+                            </Text>
+                        </View>
                     </View>
                     <View style={{flexDirection:"row", justifyContent:'space-between'}}>
                         <InputField
                             labelText="ID Number"
-                            inputType="idno"
+                            inputType={keyBoardType}
                             blurOnSubmit={false}
                             writeText={this.state.IDNumber}
                             onChangeText={this.handleIDNumberChange}
@@ -214,14 +366,22 @@ export default class BillingScreen extends Component
                             writeText={this.state.Description}
                             onChangeText={this.handleDescriptionChange}
                         />
+                        <InputField
+                            labelText="Same As"
+                            inputType="idno"
+                            writeText={this.state.sameAs}
+                            onChangeText={this.handleSameAsChange}
+                            onSubmitEditing={this.handleSameAsSubmit}
+                        />
                     </ScrollView>
                     <ScrollView>
-                        <View style={{flex:1, alignItems:'center'}}>
-                            {this.idNumbers.map((info, i) => <EditableText title={info}
+                        <View style={{flex:1, alignItems:'center', padding:20}}>
+                            {this.idNumbers.map((info, i) => <DeletableText title={info}
                                                     quantity={this.quantities[i]}
                                                     parentCallback={this.handleTextEdit}
-                                                    customItemStyle={{height:20}}
-                                                    customTextStyle={{fontSize:12}}/>)}
+                                                    parentDeleteCallback={this.handleTextDelete}
+                                                    customItemStyle={{height:25}}
+                                                    customTextStyle={{fontSize:14}}/>)}
                         </View>
                     </ScrollView>
                     <KeyboardAvoidingView style={{alignItems:"flex-end" }}>

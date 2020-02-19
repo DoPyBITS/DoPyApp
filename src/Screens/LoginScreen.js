@@ -3,6 +3,7 @@ import {View,
         Text,
         KeyboardAvoidingView,
         ScrollView,
+        Picker,
         StyleSheet} from "react-native";
 import colors from "../Styles/Color";
 import InputField from "../Components/InputField";
@@ -18,7 +19,7 @@ export default class LoginScreen extends Component
         this.state = {
             detailer : "",
             clicker : "",
-            camera : ""
+            camera : "CANDIDATE"
         };
     }
 
@@ -58,12 +59,21 @@ export default class LoginScreen extends Component
                         onChangeText={this.handleClickerChange}
                         inputType="default"
                     />
-                    <InputField
-                        labelText="Camera"
-                        writeText={this.state.camera}
-                        onChangeText={this.handleCameraChange}
-                        inputType="default"
-                    />
+                    <Picker
+                        STYLE = {{color:colors.black}}
+                        selectedValue={this.state.camera}
+                        onValueChange={this.handleCameraChange}>
+                        <Picker.Item label = "Candidate" value = "CANDIDATE" />
+                        <Picker.Item label = "Kummi" value = "KUMMI" />
+                        <Picker.Item label = "Kaiku" value = "KAIKU" />
+                        <Picker.Item label = "Zuk01" value = "ZUK01" />
+                        <Picker.Item label = "Zuk03" value = "ZUK03" />
+                        <Picker.Item label = "Zuk09" value = "ZUK09" />
+                        <Picker.Item label = "Sextape" value = "SEXTAPE" />
+                        <Picker.Item label = "Sapnupuas" value = "SAPNUPUAS" />
+                        <Picker.Item label = "Chicha" value = "CHICHA" />
+                        <Picker.Item label = "Liti" value = "LITI" />
+                    </Picker>
                 </ScrollView>
                 <KeyboardAvoidingView style={{alignItems:"flex-end" }}>
                     <InputButton

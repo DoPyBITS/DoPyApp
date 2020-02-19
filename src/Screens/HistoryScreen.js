@@ -9,7 +9,7 @@ import {View,
 import colors from "../Styles/Color";
 
 import { useFocusEffect } from '@react-navigation/native';
-import EditableText from "../Components/EditableText";
+import ClickableText from "../Components/ClickableText";
 import InputButton from "../Components/InputButton";
 import firestore from '@react-native-firebase/firestore';
 
@@ -32,12 +32,22 @@ export default class HistoryScreen extends Component
        this.state = {
             isLoading:true
        };
+
+       const unsubscribe = props.navigation.addListener('focus', () => {
+         this.setState({isLoading:true});
+         const snapShot = firestore().collection(this.camera).get()
+             .then((querySnapshot) => {
+                 this.numSnaps = querySnapshot.size;
+                 this.setState({isLoading:false})
+             });
+       });
     }
 
     handleSnapChoice = snapChoice => {
         snapNum = snapChoice.title;
 
         this.props.navigation.navigate('Billing', {
+                totalSnaps: this.numSnaps,
                 snapNum:snapNum,
                 clicker:this.clicker,
                 detailer:this.detailer,
@@ -47,6 +57,7 @@ export default class HistoryScreen extends Component
 
     handleNavigationButton = () => {
         this.props.navigation.navigate('Billing', {
+                totalSnaps: this.numSnaps,
                 clicker:this.clicker,
                 detailer:this.detailer,
                 camera:this.camera,
@@ -72,11 +83,9 @@ export default class HistoryScreen extends Component
                 <SafeAreaView style={styles.background}>
                     <FlatList
                         data = {numArray}
-                        renderItem={({ item }) => <EditableText title={item}
+                        renderItem={({ item }) => <ClickableText title={item}
                                                                 parentCallback={this.handleSnapChoice}
-                                                                customItemStyle={{height:40,
-                                                                                  borderWidth:0.5,
-                                                                                  borderColor:colors.white}}
+                                                                customItemStyle={{height:40, borderWidth:0.5, borderColor:colors.white}}
                                                                 customTextStyle={{fontSize:16}}/> }
                     />
                     <KeyboardAvoidingView style={{alignItems:"flex-end" }}>

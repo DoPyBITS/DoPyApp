@@ -6,7 +6,7 @@ import {View,
         TouchableOpacity} from "react-native";
 import colors from "../Styles/Color";
 
-class EditableText extends Component
+class ClickableText extends Component
 {
     sendData = () => {
         this.props.parentCallback(this.props);
@@ -15,21 +15,15 @@ class EditableText extends Component
     render()
     {
         const {title,
-               quantity,
                customItemStyle,
                customTextStyle} =  this.props
-        var toPrint = "";
-        if(quantity)
-            toPrint = title + " x " + quantity;
-        else
-            toPrint = title
         return (
             <TouchableOpacity
                 style={[styles.touchableStyle, customItemStyle]}
                 onPress={this.sendData}
             >
                 <Text style = {[customTextStyle, styles.textStyle]}>
-                    {toPrint}
+                    {title}
                 </Text>
             </TouchableOpacity>
         )
@@ -40,7 +34,8 @@ const styles = StyleSheet.create({
     touchableStyle: {
         width:Dimensions.get('window').width,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
+        flex:7
     },
     textStyle: {
 //        fontSize: 12,
@@ -49,4 +44,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default EditableText;
+export default ClickableText;
