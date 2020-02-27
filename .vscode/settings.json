@@ -1,0 +1,10 @@
+{
+  "eslint.enable": true,
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.options": {
+    "rulePaths": ["./scripts/lint"]
+  }
+}
