@@ -60,7 +60,7 @@ export default class LoginScreen extends Component
                         inputType="default"
                     />
                     <Picker
-                        STYLE = {{color:colors.black}}
+                        style = {{color:colors.white}}
                         selectedValue={this.state.camera}
                         onValueChange={this.handleCameraChange}>
                         <Picker.Item label = "Candidate" value = "CANDIDATE" />

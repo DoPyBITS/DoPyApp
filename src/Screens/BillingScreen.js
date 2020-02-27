@@ -215,8 +215,8 @@ export default class BillingScreen extends Component
                        editingText:"",
                        description:"",
                        currIdx:0,
-                       snapno:this.state.totalSnaps+2,
-                       totalSnaps:this.state.totalSnaps+1
+                       snapno:this.totalSnaps+2,
+                       totalSnaps:this.totalSnaps+1
                        })
     }
 
