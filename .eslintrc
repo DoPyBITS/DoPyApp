@@ -1,0 +1,67 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    },
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "react", 
+    "react-native", 
+    "@typescript-eslint/eslint-plugin"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/@typescript-eslint",
+    "prettier/react",
+    "@react-native-community"
+  ],
+  "env": {
+    "react-native/react-native": true
+  },
+  "rules": {
+    "semi": [2, "never"],
+
+    "react-native/no-unused-styles": 2,
+    "react-native/split-platform-components": 2,
+    "react-native/no-inline-styles": 2,
+    "react-native/no-color-literals": 2,
+    "react-native/no-raw-text": 2,
+    "react-native/no-single-element-style-arrays": 2,
+
+    "@typescript-eslint/indent": 0,
+    "@typescript-eslint/no-use-before-define": 1,
+    "@typescript-eslint/adjacent-overload-signatures": 1,
+    "@typescript-eslint/camelcase": 1,
+    "@typescript-eslint/member-delimiter-style": 0,
+    "@typescript-eslint/explicit-member-accessibility": 0,
+    "@typescript-eslint/array-type": [2, { "default": "array-simple" }],
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/no-empty-function": 1,
+    "@typescript-eslint/no-this-alias": 1,
+    "@typescript-eslint/ban-types": [
+      2,
+      {
+        "types": {
+          "Function": "Use proper function declaration instead",
+          "String": "Use string",
+          "Number": "Use number",
+          "Boolean": "Use boolean"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "react": {
+      "version": "16.9"
+    }
+  }
+}
