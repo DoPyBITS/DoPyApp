@@ -211,10 +211,8 @@ export default class BillingScreen extends Component {
         .then(docSnapshot => {
           const tempIDArr = docSnapshot.data().idNumbers;
           const tempQuantArr = docSnapshot.data().quantities;
-          console.log(tempIDArr);
-          this.idNumbers = this.idNumbers.concat(tempIDArr);
-          this.quantities = this.quantities.concat(tempQuantArr);
-          console.log(this.idNumbers);
+          this.idNumbers = [...new Set(this.idNumbers.concat(tempIDArr))];
+          this.quantities = [...new Set(this.quantities.concat(tempQuantArr))];
           this.setState({
             isLoading: false,
             currIdx: this.idNumbers.length,
@@ -230,10 +228,10 @@ export default class BillingScreen extends Component {
             .then(docSnapshot => {
               const tempIDArr = docSnapshot.data().idNumbers;
               const tempQuantArr = docSnapshot.data().quantities;
-              console.log(tempIDArr);
-              this.idNumbers = this.idNumbers.concat(tempIDArr);
-              this.quantities = this.quantities.concat(tempQuantArr);
-              console.log(this.idNumbers);
+              this.idNumbers = [...new Set(this.idNumbers.concat(tempIDArr))];
+              this.quantities = [
+                ...new Set(this.idNumbers.concat(tempQuantArr)),
+              ];
               this.setState({
                 isLoading: false,
                 currIdx: this.idNumbers.length,
@@ -241,19 +239,6 @@ export default class BillingScreen extends Component {
               });
             });
         });
-
-      this.idNumbers = [];
-      this.quantities = [];
-      this.setState({
-        isOutstation: false,
-        IDNumber: '',
-        Quantity: 1,
-        editingText: '',
-        description: '',
-        currIdx: 0,
-        snapno: this.totalSnaps + 2,
-      });
-      this.totalSnaps += 1;
     }
   };
 
@@ -277,6 +262,7 @@ export default class BillingScreen extends Component {
       });
 
     console.log(this.totalSnaps);
+    console.log(this.state.snapno);
 
     this.idNumbers = [];
     this.quantities = [];
@@ -290,11 +276,14 @@ export default class BillingScreen extends Component {
       snapno: this.totalSnaps + 2,
     });
     this.totalSnaps += 1;
+
+    console.log(this.state.snapno);
   };
 
   goPrevious = () => {
     if (this.state.snapno == 1) {
       alert("Can't go back!!");
+      return;
     }
 
     this.setState({isLoading: true});
@@ -337,6 +326,7 @@ export default class BillingScreen extends Component {
   goNext = () => {
     if (this.state.snapno == this.totalSnaps) {
       alert("Can't go to the next!!");
+      return;
     }
 
     this.setState({isLoading: true});
