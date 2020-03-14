@@ -9,9 +9,9 @@ import {Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import Login from './src/screens/LoginScreen';
-import Billing from './src/screens/BillingScreen';
-import History from './src/screens/HistoryScreen';
+import Login from './src/Screens/LoginScreen';
+import Billing from './src/Screens/BillingScreen';
+import History from './src/Screens/HistoryScreen';
 
 const Stack = createStackNavigator();
 

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import colors from '../styles/color';
+import colors from '../Styles/Color';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 
 class InputField extends Component {

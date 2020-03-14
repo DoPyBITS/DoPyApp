@@ -6,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import colors from '../styles/color';
+import colors from '../Styles/Color';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 class DeletableText extends Component {

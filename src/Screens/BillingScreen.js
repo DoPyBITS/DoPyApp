@@ -9,11 +9,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import colors from '../styles/color';
-import InputField from '../components/InputField';
-import InputButton from '../components/InputButton';
-import ClickableCounter from '../components/ClickableCounter';
-import DeletableText from '../components/DeletableText';
+import colors from '../Styles/Color';
+import InputField from '../Components/InputField';
+import InputButton from '../Components/InputButton';
+import ClickableCounter from '../Components/ClickableCounter';
+import DeletableText from '../Components/DeletableText';
 
 import firestore from '@react-native-firebase/firestore';
 
@@ -24,6 +24,7 @@ export default class BillingScreen extends Component {
     this.idNumbers = [];
     this.quantities = [];
     this.totalSnaps = props.route.params.totalSnaps;
+    console.log('Total snaps is ' + this.totalSnaps);
 
     this.state = {
       detailer: props.route.params.detailer.toUpperCase(),
@@ -46,7 +47,7 @@ export default class BillingScreen extends Component {
       const snapShot = firestore()
         .collection(this.state.camera)
         .doc(String(this.props.route.params.snapNum))
-        .get()
+        .get({source: 'cache'})
         .then(docSnapshot => {
           this.idNumbers = docSnapshot.data().idNumbers;
           this.quantities = docSnapshot.data().quantities;
@@ -60,7 +61,21 @@ export default class BillingScreen extends Component {
         })
         .catch(function(error) {
           console.log('Error getting document:', error);
-          throw error;
+          firestore()
+            .collection(this.state.camera)
+            .doc(String(this.props.route.params.snapNum))
+            .get()
+            .then(docSnapshot => {
+              this.idNumbers = docSnapshot.data().idNumbers;
+              this.quantities = docSnapshot.data().quantities;
+              this.setState({
+                isLoading: false,
+                isOutstation: docSnapshot.outstation,
+                description: docSnapshot.description,
+                snapno: this.props.route.params.snapNum,
+                currIdx: this.idNumbers.length,
+              });
+            });
         });
     } else {
       this.setState({snapno: this.totalSnaps + 1, isLoading: false});
@@ -73,7 +88,7 @@ export default class BillingScreen extends Component {
       const snapShot = firestore()
         .collection(this.state.camera)
         .doc(String(this.props.route.params.snapNum))
-        .get()
+        .get({source: 'cache'})
         .then(docSnapshot => {
           this.idNumbers = docSnapshot.data().idNumbers;
           this.quantities = docSnapshot.data().quantities;
@@ -87,7 +102,21 @@ export default class BillingScreen extends Component {
         })
         .catch(function(error) {
           console.log('Error getting document:', error);
-          throw error;
+          firestore()
+            .collection(this.state.camera)
+            .doc(String(this.props.route.params.snapNum))
+            .get()
+            .then(docSnapshot => {
+              this.idNumbers = docSnapshot.data().idNumbers;
+              this.quantities = docSnapshot.data().quantities;
+              this.setState({
+                isLoading: false,
+                isOutstation: docSnapshot.outstation,
+                description: docSnapshot.description,
+                snapno: this.props.route.params.snapNum,
+                currIdx: this.idNumbers.length,
+              });
+            });
         });
     } else {
       this.idNumbers = [];
@@ -178,7 +207,7 @@ export default class BillingScreen extends Component {
       firestore()
         .collection(this.state.camera)
         .doc(this.state.sameAs)
-        .get()
+        .get({source: 'cache'})
         .then(docSnapshot => {
           const tempIDArr = docSnapshot.data().idNumbers;
           const tempQuantArr = docSnapshot.data().quantities;
@@ -194,6 +223,23 @@ export default class BillingScreen extends Component {
         })
         .catch(function(error) {
           console.error('Error writing document: ', error);
+          firestore()
+            .collection(this.state.camera)
+            .doc(this.state.sameAs)
+            .get()
+            .then(docSnapshot => {
+              const tempIDArr = docSnapshot.data().idNumbers;
+              const tempQuantArr = docSnapshot.data().quantities;
+              console.log(tempIDArr);
+              this.idNumbers = this.idNumbers.concat(tempIDArr);
+              this.quantities = this.quantities.concat(tempQuantArr);
+              console.log(this.idNumbers);
+              this.setState({
+                isLoading: false,
+                currIdx: this.idNumbers.length,
+                sameAs: '',
+              });
+            });
         });
 
       this.idNumbers = [];
@@ -206,8 +252,8 @@ export default class BillingScreen extends Component {
         description: '',
         currIdx: 0,
         snapno: this.totalSnaps + 2,
-        totalSnaps: this.totalSnaps + 1,
       });
+      this.totalSnaps += 1;
     }
   };
 
@@ -230,6 +276,8 @@ export default class BillingScreen extends Component {
         console.error('Error writing document: ', error);
       });
 
+    console.log(this.totalSnaps);
+
     this.idNumbers = [];
     this.quantities = [];
     this.setState({
@@ -239,9 +287,9 @@ export default class BillingScreen extends Component {
       editingText: '',
       description: '',
       currIdx: 0,
-      snapno: this.state.totalSnaps + 2,
-      totalSnaps: this.state.totalSnaps + 1,
+      snapno: this.totalSnaps + 2,
     });
+    this.totalSnaps += 1;
   };
 
   goPrevious = () => {
@@ -254,7 +302,7 @@ export default class BillingScreen extends Component {
     firestore()
       .collection(this.state.camera)
       .doc(String(this.state.snapno - 1))
-      .get()
+      .get({source: 'cache'})
       .then(docSnapshot => {
         this.idNumbers = docSnapshot.data().idNumbers;
         this.quantities = docSnapshot.data().quantities;
@@ -268,7 +316,21 @@ export default class BillingScreen extends Component {
       })
       .catch(function(error) {
         console.log('Error getting document:', error);
-        throw error;
+        firestore()
+          .collection(this.state.camera)
+          .doc(String(this.state.snapno - 1))
+          .get()
+          .then(docSnapshot => {
+            this.idNumbers = docSnapshot.data().idNumbers;
+            this.quantities = docSnapshot.data().quantities;
+            this.setState({
+              isLoading: false,
+              isOutstation: docSnapshot.outstation,
+              description: docSnapshot.description,
+              snapno: this.state.snapno - 1,
+              currIdx: this.idNumbers.length,
+            });
+          });
       });
   };
 
@@ -282,7 +344,7 @@ export default class BillingScreen extends Component {
     firestore()
       .collection(this.state.camera)
       .doc(String(this.state.snapno + 1))
-      .get()
+      .get({source: 'cache'})
       .then(docSnapshot => {
         this.idNumbers = docSnapshot.data().idNumbers;
         this.quantities = docSnapshot.data().quantities;
@@ -296,7 +358,25 @@ export default class BillingScreen extends Component {
       })
       .catch(function(error) {
         console.log('Error getting document:', error);
-        throw error;
+        firestore()
+          .collection(this.state.camera)
+          .doc(String(this.state.snapno + 1))
+          .get()
+          .then(docSnapshot => {
+            this.idNumbers = docSnapshot.data().idNumbers;
+            this.quantities = docSnapshot.data().quantities;
+            this.setState({
+              isLoading: false,
+              isOutstation: docSnapshot.outstation,
+              description: docSnapshot.description,
+              snapno: this.state.snapno + 1,
+              currIdx: this.idNumbers.length,
+            });
+          })
+          .catch(function(error) {
+            console.log('Error getting document:', error);
+            throw error;
+          });
       });
   };
 

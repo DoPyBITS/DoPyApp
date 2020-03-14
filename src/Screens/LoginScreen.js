@@ -7,9 +7,9 @@ import {
   Picker,
   StyleSheet,
 } from 'react-native';
-import colors from '../styles/color';
-import InputField from '../components/InputField';
-import InputButton from '../components/InputButton';
+import colors from '../Styles/Color';
+import InputField from '../Components/InputField';
+import InputButton from '../Components/InputButton';
 
 export default class LoginScreen extends Component {
   constructor(props) {

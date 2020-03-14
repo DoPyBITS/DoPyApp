@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, Button, TouchableOpacity, StyleSheet} from 'react-native';
-import colors from '../styles/color';
+import colors from '../Styles/Color';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 class InputButton extends Component {

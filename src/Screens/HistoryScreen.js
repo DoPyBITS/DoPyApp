@@ -8,11 +8,11 @@ import {
   KeyboardAvoidingView,
   StyleSheet,
 } from 'react-native';
-import colors from '../styles/color';
+import colors from '../Styles/Color';
 
 import {useFocusEffect} from '@react-navigation/native';
-import ClickableText from '../components/ClickableText';
-import InputButton from '../components/InputButton';
+import ClickableText from '../Components/ClickableText';
+import InputButton from '../Components/InputButton';
 import firestore from '@react-native-firebase/firestore';
 
 export default class HistoryScreen extends Component {
@@ -29,7 +29,15 @@ export default class HistoryScreen extends Component {
       .then(querySnapshot => {
         this.numSnaps = querySnapshot.size;
         this.setState({isLoading: false});
-      })
+      });
+
+    const noNameYet = firestore()
+      .collection(this.camera)
+      .onSnapshot(querySnapshot => {
+        console.log(this.numSnaps);
+        this.numSnaps = querySnapshot.size;
+        console.log(this.numSnaps);
+      });
 
     this.state = {
       isLoading: true,
@@ -43,7 +51,7 @@ export default class HistoryScreen extends Component {
         .then(querySnapshot => {
           this.numSnaps = querySnapshot.size;
           this.setState({isLoading: false});
-        })
+        });
     });
   }
 
