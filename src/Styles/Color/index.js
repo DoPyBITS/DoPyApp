@@ -2,7 +2,7 @@
 export default {
   // Background tones
   brblack: '#002b36',
-  black: '#073642',
+  black: '#121212',
 
   // Content tones
   brgreen: '#586e75',

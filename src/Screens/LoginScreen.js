@@ -45,14 +45,14 @@ export default class LoginScreen extends Component {
   render() {
     return (
       <View style={styles.background}>
-        <ScrollView>
+        <View>
           <Text style={styles.loginHeader}>Login</Text>
-          <InputField
-            labelText="Detailer"
-            writeText={this.state.detailer}
-            onChangeText={this.handleDetailerChange}
-            inputType="default"
-          />
+            <InputField
+                labelText="Detailer"
+                writeText={this.state.detailer}
+                onChangeText={this.handleDetailerChange}
+                inputType="default"
+            />
           <InputField
             labelText="Clicker"
             writeText={this.state.clicker}
@@ -60,7 +60,7 @@ export default class LoginScreen extends Component {
             inputType="default"
           />
           <Picker
-            style={{color: colors.white}}
+            style={{color: colors.white, height: 50}}
             selectedValue={this.state.camera}
             onValueChange={this.handleCameraChange}>
             <Picker.Item label="Candidate" value="CANDIDATE" />
@@ -74,10 +74,8 @@ export default class LoginScreen extends Component {
             <Picker.Item label="Chicha" value="CHICHA" />
             <Picker.Item label="Liti" value="LITI" />
           </Picker>
-        </ScrollView>
-        <KeyboardAvoidingView style={{alignItems: 'flex-end'}}>
           <InputButton onPress={this.login} />
-        </KeyboardAvoidingView>
+        </View>
       </View>
     );
   }
@@ -85,15 +83,16 @@ export default class LoginScreen extends Component {
 
 const styles = StyleSheet.create({
   background: {
-    display: 'flex',
     flex: 1,
     backgroundColor: colors.black,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loginHeader: {
     fontSize: 46,
     color: colors.white,
-    fontWeight: 'normal',
     textAlign: 'center',
     marginBottom: 40,
+    fontFamily: "Roboto-Thin"
   },
 });

@@ -125,5 +125,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.white,
     marginBottom: 10,
+    fontFamily: 'Roboto-Thin'
   },
 });

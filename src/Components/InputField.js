@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import colors from '../Styles/Color';
-import {View, Text, StyleSheet, TextInput} from 'react-native';
+import {View, Text, StyleSheet, TextInput, Dimensions} from 'react-native';
 
 class InputField extends Component {
   constructor(props) {
@@ -22,35 +22,39 @@ class InputField extends Component {
     const keyboardType = inputType == 'idno' ? 'number-pad' : 'default';
 
     return (
-      <TextInput
-        value={writeText}
-        placeholder={labelText}
-        style={styles.inputFieldStyle}
-        autoCorrect={false}
-        blurOnSubmit={blurOnSubmit}
-        onChangeText={onChangeText}
-        autoCapitalize="characters"
-        keyboardType={keyboardType}
-        textColor={colors.white}
-        placeholderTextColor={colors.white}
-        onSubmitEditing={onSubmitEditing}
-      />
+      <View style={styles.wrapper}>
+        <TextInput
+          value={writeText}
+          placeholder={labelText}
+          style={styles.inputFieldStyle}
+          autoCorrect={false}
+          blurOnSubmit={blurOnSubmit}
+          onChangeText={onChangeText}
+          autoCapitalize="characters"
+          keyboardType={keyboardType}
+          textColor={colors.white}
+          placeholderTextColor={colors.white}
+          onSubmitEditing={onSubmitEditing}
+        />
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    display: 'flex',
+    backgroundColor: '#292929',
+    borderRadius: 25,
+    height: 50,
+    width: Dimensions.get('window').width-20,
+    marginBottom: 20,
+    justifyContent: 'center',
+    padding: 20,
   },
   inputFieldStyle: {
-    flex: 1,
-    borderBottomWidth: 1,
-    paddingTop: 5,
-    paddingBottom: 5,
-    marginBottom: 30,
+    height: 50,
     color: colors.white,
-    borderBottomColor: colors.white,
+    fontFamily: 'Roboto-Thin',
   },
 });
 
